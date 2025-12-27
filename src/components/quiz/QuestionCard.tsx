@@ -37,9 +37,9 @@ export function QuestionCard({
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
           transition={{ duration: 0.4 }}
         >
-          <Card className="bg-slate-900/50 backdrop-blur-xl border-slate-800/50 p-6 md:p-10 shadow-2xl">
+          <Card className="bg-white/80 backdrop-blur-xl border-gray-200/50 p-6 md:p-10 shadow-2xl">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 leading-relaxed">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-relaxed">
                 {question.question}
               </h2>
 
@@ -54,7 +54,7 @@ export function QuestionCard({
                   <Button
                     onClick={onToggleHint}
                     variant="outline"
-                    className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50 rounded-lg bg-transparent"
+                    className="border-pink-300/50 text-pink-600 hover:bg-pink-100/50 hover:border-pink-400/70 rounded-lg bg-transparent"
                   >
                     <motion.span
                       animate={{ scale: [1, 1.1, 1] }}
@@ -74,9 +74,9 @@ export function QuestionCard({
                     initial={{ opacity: 0, height: 0, y: -10 }}
                     animate={{ opacity: 1, height: "auto", y: 0 }}
                     exit={{ opacity: 0, height: 0, y: -10 }}
-                    className="mb-6 bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4"
+                    className="mb-6 bg-pink-100/50 border border-pink-300/50 rounded-lg p-4"
                   >
-                    <p className="text-cyan-300 text-sm">
+                    <p className="text-pink-700 text-sm">
                       <span className="font-semibold">Hint:</span> {question.hint}
                     </p>
                   </motion.div>
@@ -107,18 +107,18 @@ export function QuestionCard({
                           w-full p-6 rounded-xl text-left font-medium transition-all duration-300
                           ${
                             !answered
-                              ? "bg-slate-800/50 border-2 border-slate-700/50 hover:border-cyan-500/50 hover:bg-slate-800/70 hover:shadow-lg hover:shadow-cyan-500/10"
+                              ? "bg-gray-50 border-2 border-gray-200 hover:border-pink-300 hover:bg-pink-50/50 hover:shadow-lg hover:shadow-pink-200/30"
                               : ""
                           }
                           ${
                             showCorrect
-                              ? "bg-emerald-500/20 border-2 border-emerald-500 shadow-lg shadow-emerald-500/30"
+                              ? "bg-emerald-100/50 border-2 border-emerald-300 shadow-lg shadow-emerald-200/30"
                               : ""
                           }
-                          ${showWrong ? "bg-red-500/20 border-2 border-red-500 shadow-lg shadow-red-500/30" : ""}
+                          ${showWrong ? "bg-red-100/50 border-2 border-red-300 shadow-lg shadow-red-200/30" : ""}
                           ${
                             answered && !showCorrect && !showWrong
-                              ? "bg-slate-800/30 border-2 border-slate-700/30 opacity-50"
+                              ? "bg-gray-100/50 border-2 border-gray-200/30 opacity-50"
                               : ""
                           }
                         `}
@@ -136,10 +136,10 @@ export function QuestionCard({
                         >
                           <span
                             className={`
-                              ${!answered ? "text-slate-200" : ""}
-                              ${showCorrect ? "text-emerald-300" : ""}
-                              ${showWrong ? "text-red-300" : ""}
-                              ${answered && !showCorrect && !showWrong ? "text-slate-500" : ""}
+                              ${!answered ? "text-gray-700" : ""}
+                              ${showCorrect ? "text-emerald-600" : ""}
+                              ${showWrong ? "text-red-600" : ""}
+                              ${answered && !showCorrect && !showWrong ? "text-gray-500" : ""}
                             `}
                           >
                             {option}
@@ -150,7 +150,7 @@ export function QuestionCard({
                               animate={{ scale: 1 }}
                               transition={{ type: "spring", stiffness: 300 }}
                             >
-                              <Check className="w-6 h-6 text-emerald-400" />
+                              <Check className="w-6 h-6 text-emerald-500" />
                             </motion.div>
                           )}
                           {showWrong && (
@@ -159,7 +159,7 @@ export function QuestionCard({
                               animate={{ scale: 1 }}
                               transition={{ type: "spring", stiffness: 300 }}
                             >
-                              <X className="w-6 h-6 text-red-400" />
+                              <X className="w-6 h-6 text-red-500" />
                             </motion.div>
                           )}
                         </motion.div>
@@ -178,7 +178,7 @@ export function QuestionCard({
                 <Button
                   onClick={onNext}
                   disabled={!answered}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 disabled:from-slate-700 disabled:to-slate-700 text-white font-semibold py-6 text-lg rounded-xl shadow-lg transition-all disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 disabled:from-gray-300 disabled:to-gray-400 text-white font-semibold py-6 text-lg rounded-xl shadow-lg transition-all disabled:cursor-not-allowed"
                 >
                   {isLastQuestion ? "See Results →" : "Next Question →"}
                 </Button>
