@@ -22,24 +22,48 @@ function App() {
 
   useEffect(() => {
     const fetchQuiz = async () => {
+      const cacheKey = 'quizentia-quiz-data';
+      const cacheExpiryKey = 'quizentia-quiz-expiry';
+      const cacheDuration = 60 * 60 * 1000;
+      
       try {
+        const cachedData = localStorage.getItem(cacheKey);
+        const cacheExpiry = localStorage.getItem(cacheExpiryKey);
+        const now = Date.now();
+        
+        if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
+          const data: QuizData = JSON.parse(cachedData);
+          data.questions.forEach(question => {
+            question.options = shuffleArray(question.options);
+          });
+          setQuizData(data);
+          return;
+        }
+        
         const response = await fetch('http://localhost:8000/generate_quiz', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            url: 'https://www.livelaw.in/articles/commercial-courts-act-definition-of-commercial-dispute-judicial-interpretation-analysis-513599'
+            url: 'https://www.livelaw.in/articles/arbitration-award-stay-section-36-after-2015-amendment-analysis-313142'
           }),
         });
+        
         if (!response.ok) {
           throw new Error('Failed to fetch quiz');
         }
+        
         const data: QuizData = await response.json();
+        
         // Shuffle options for each question
         data.questions.forEach(question => {
           question.options = shuffleArray(question.options);
         });
+        
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+        localStorage.setItem(cacheExpiryKey, (now + cacheDuration).toString());
+        
         setQuizData(data);
       } catch (error) {
         console.error('Error fetching quiz:', error);
@@ -100,7 +124,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-100 to-purple-100 p-4">
       <QuizHeader title={quizData.title} />
       <QuizProgress current={currentQuestion} total={quizData.questions.length} />
       <QuestionCard
