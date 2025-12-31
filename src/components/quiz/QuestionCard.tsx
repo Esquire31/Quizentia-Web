@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "../ui/button"
-import { Card } from "../ui/card"
+import { Button } from "../ui/base/button"
+import { Card } from "../ui/base/card"
 import { Check, X } from "lucide-react"
 import type { QuizQuestion } from "../../lib/quiz-types"
 
@@ -84,7 +84,7 @@ export function QuestionCard({
               </AnimatePresence>
 
               {/* Options Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 items-stretch">
                 {question.options.map((option, index) => {
                   const isSelected = selectedOption === option
                   const isCorrectOption = option === question.correct_answer
@@ -104,7 +104,7 @@ export function QuestionCard({
                         onClick={() => onOptionClick(option)}
                         disabled={answered}
                         className={`
-                          w-full p-6 rounded-xl text-left font-medium transition-all duration-300
+                          w-full h-full min-h-[120px] p-6 rounded-xl text-left font-medium transition-all duration-300 items-center
                           ${
                             !answered
                               ? "bg-gray-50 border-2 border-gray-200 hover:border-pink-300 hover:bg-pink-50/50 hover:shadow-lg hover:shadow-pink-200/30"
@@ -132,7 +132,7 @@ export function QuestionCard({
                                 }
                               : {}
                           }
-                          className="flex items-center justify-between"
+                          className="flex items-center justify-between w-full"
                         >
                           <span
                             className={`

@@ -6,8 +6,16 @@ export interface QuizQuestion {
 }
 
 export interface QuizData {
+  id?: string;
   title: string;
   questions: QuizQuestion[];
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface QuizListItem {
+  quiz_id: string;
+  title: string;
 }
 
 export function shuffleArray<T>(array: T[]): T[] {
