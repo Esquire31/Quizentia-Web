@@ -1,32 +1,21 @@
 "use client"
 
+import { useState } from "react"
 import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom"
 import { HomeScreen } from "./components/quiz/HomeScreen"
 import { QuizScreen } from "./components/quiz/QuizScreen"
 import { QuizList } from "./components/quiz/QuizListScreen"
 import { QuizHeader } from "./components/quiz/QuizHeader"
-import type { QuizData } from "./lib/quiz-types"
 
 function App() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [selectedQuizIds, setSelectedQuizIds] = useState<number[]>([])
 
-  const demoQuizzes: QuizData[] = [
-    {
-      id: "current-week",
-      title: "Current Week Quiz",
-      startDate: "2025-12-29",
-      endDate: "2026-01-04",
-      questions: [],
-    },
-    {
-      id: "week-1",
-      title: "Week 1 Recap",
-      startDate: "2025-12-22",
-      endDate: "2025-12-28",
-      questions: [],
-    },
-  ]
+  const handleQuizSelect = (quizIds: number[]) => {
+    setSelectedQuizIds(quizIds)
+    navigate("/quiz")
+  }
 
   const getHeaderTitle = () => {
     switch (location.pathname) {
@@ -48,9 +37,9 @@ function App() {
         <Route path="/" element={<HomeScreen onStart={() => navigate("/quizlist")} />} />
         <Route
           path="/quizlist"
-          element={<QuizList quizzes={demoQuizzes} onSelect={() => navigate("/quiz")} onBack={() => navigate("/")} />}
+          element={<QuizList onSelect={handleQuizSelect} onBack={() => navigate("/")} />}
         />
-        <Route path="/quiz" element={<QuizScreen onBack={() => navigate("/quizlist")} />} />
+        <Route path="/quiz" element={<QuizScreen quizIds={selectedQuizIds} onBack={() => navigate("/quizlist")} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

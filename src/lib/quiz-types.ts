@@ -11,11 +11,26 @@ export interface QuizData {
   questions: QuizQuestion[];
   startDate?: string;
   endDate?: string;
+  quiz_id?: number;
+  created_at?: string;
 }
 
 export interface QuizListItem {
   quiz_id: string;
   title: string;
+}
+
+export interface WeeklyQuizItem {
+  id: number;
+  quiz_id: number;
+  title: string;
+  created_at: string;
+}
+
+export interface WeeklyQuizData {
+  week_label: string;
+  quiz_ids: number[];
+  quizzes: WeeklyQuizItem[];
 }
 
 export function shuffleArray<T>(array: T[]): T[] {
@@ -25,4 +40,9 @@ export function shuffleArray<T>(array: T[]): T[] {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+export function getRandomQuizIds(quizIds: number[], count: number = 10): number[] {
+  const shuffled = shuffleArray(quizIds);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
 }
