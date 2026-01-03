@@ -1,0 +1,43 @@
+name: Deploy React Frontend
+
+on:
+  push:
+    branches: [ DreamLaw/release ] # Change this to 'master' if your branch is named master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Or your preferred version
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "dist/*" # If using Vite, it's 'dist'. If using Create-React-App, it's 'build'
+          target: "/var/www/dreamlaw_quiz"
+          strip_components: 1
+
+      - name: Cleanup and Restart Nginx
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo systemctl restart nginx
