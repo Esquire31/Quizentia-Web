@@ -24,13 +24,37 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
   const [showResults, setShowResults] = useState(false)
   const [answered, setAnswered] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [userAnswers, setUserAnswers] = useState<(string | null)[]>([])  
+  const [userAnswers, setUserAnswers] = useState<(string | null)[]>([])
+  
+  // If quizIds not provided, try to load from localStorage
+  const [activeQuizIds, setActiveQuizIds] = useState<number[] | undefined>(() => {
+    // Initialize with quizIds from props or localStorage
+    if (quizIds && quizIds.length > 0) {
+      return quizIds
+    }
+    const lastQuizIds = localStorage.getItem('quizentia-last-quiz-ids')
+    if (lastQuizIds) {
+      const parsed = JSON.parse(lastQuizIds)
+      // Only use it if it's a valid non-empty array
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+      }
+    }
+    return undefined
+  })
 
-  const progressKey = quizIds ? `quizentia-progress-${quizIds.join('-')}` : 'quizentia-progress'
+  useEffect(() => {
+    if (quizIds && quizIds.length > 0) {
+      // Store the quiz IDs for future reloads
+      localStorage.setItem('quizentia-last-quiz-ids', JSON.stringify(quizIds))
+      setActiveQuizIds(quizIds)
+    }
+  }, [quizIds])
 
   // Save progress whenever state changes
   useEffect(() => {
-    if (quizData && !showResults) {
+    if (quizData && !showResults && activeQuizIds && activeQuizIds.length > 0) {
+      const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
       const progress = {
         currentQuestion,
         score,
@@ -40,25 +64,15 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
       }
       localStorage.setItem(progressKey, JSON.stringify(progress))
     }
-  }, [currentQuestion, score, userAnswers, answered, selectedOption, quizData, showResults, progressKey])
-
-  // Load saved progress
-  const loadProgress = () => {
-    const savedProgress = localStorage.getItem(progressKey)
-    if (savedProgress) {
-      const progress = JSON.parse(savedProgress)
-      setCurrentQuestion(progress.currentQuestion || 0)
-      setScore(progress.score || 0)
-      setUserAnswers(progress.userAnswers || [])
-      setAnswered(progress.answered || false)
-      setSelectedOption(progress.selectedOption || null)
-    }
-  } 
+  }, [currentQuestion, score, userAnswers, answered, selectedOption, quizData, showResults, activeQuizIds])
 
   useEffect(() => {
+    if (!activeQuizIds || activeQuizIds.length === 0) return
+
     const fetchQuiz = async () => {
-      const cacheKey = quizIds ? `quizentia-quiz-data-${quizIds.join('-')}` : `quizentia-quiz-data`;
-      const cacheExpiryKey = quizIds ? `quizentia-quiz-expiry-${quizIds.join('-')}` : `quizentia-quiz-expiry`;
+      const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
+      const cacheKey = `quizentia-quiz-data-${activeQuizIds.join('-')}`;
+      const cacheExpiryKey = `quizentia-quiz-expiry-${activeQuizIds.join('-')}`;
       const cacheDuration = 60 * 60 * 1000;
 
       try {
@@ -68,37 +82,32 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
 
         if (cachedData && cacheExpiry && now < parseInt(cacheExpiry)) {
           const data: QuizData = JSON.parse(cachedData);
-          data.questions.forEach(question => {
-            question.options = shuffleArray(question.options);
-          });
+          // Don't reshuffle - options are already shuffled and saved in cache
           setQuizData(data);
           
-          // Initialize user answers array
-          setUserAnswers(new Array(data.questions.length).fill(null))
-          
-          // Load saved progress
-          loadProgress();
+          // Load saved progress first
+          const savedProgress = localStorage.getItem(progressKey)
+          if (savedProgress) {
+            const progress = JSON.parse(savedProgress)
+            setCurrentQuestion(progress.currentQuestion || 0)
+            setScore(progress.score || 0)
+            setUserAnswers(progress.userAnswers || new Array(data.questions.length).fill(null))
+            setAnswered(progress.answered || false)
+            setSelectedOption(progress.selectedOption || null)
+          } else {
+            // Initialize user answers array if no saved progress
+            setUserAnswers(new Array(data.questions.length).fill(null))
+          }
           return;
         }
 
-        // If quizIds are provided, use POST request, otherwise use GET
-        let response;
-        if (quizIds && quizIds.length > 0) {
-          response = await fetch(`http://localhost:8000/quizzes/get`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ quiz_ids: quizIds }),
-          });
-        } else {
-          response = await fetch(`http://localhost:8000/quizzes/get`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        }
+        const response = await fetch(`http://localhost:8000/quizzes/get`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ quiz_ids: activeQuizIds }),
+        });
 
         if (!response.ok) {
           throw new Error('Failed to fetch quiz');
@@ -116,22 +125,29 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
 
         setQuizData(data);
         
-        // Initialize user answers array
-        setUserAnswers(new Array(data.questions.length).fill(null))
-        
-        // Load saved progress after setting quiz data
-        loadProgress();
+        // Load saved progress first
+        const savedProgress = localStorage.getItem(progressKey)
+        if (savedProgress) {
+          const progress = JSON.parse(savedProgress)
+          setCurrentQuestion(progress.currentQuestion || 0)
+          setScore(progress.score || 0)
+          setUserAnswers(progress.userAnswers || new Array(data.questions.length).fill(null))
+          setAnswered(progress.answered || false)
+          setSelectedOption(progress.selectedOption || null)
+        } else {
+          // Initialize user answers array if no saved progress
+          setUserAnswers(new Array(data.questions.length).fill(null))
+        }
       } catch (error) {
         console.error('Error fetching quiz:', error);
         setError('Failed to load quiz. Please try again later.');
       }
     };
     fetchQuiz();
-  }, [quizIds])
+  }, [activeQuizIds])
 
   const handleOptionClick = (option: string) => {
     if (!quizData || answered) return
-
     setSelectedOption(option)
     setAnswered(true)
     
@@ -158,7 +174,10 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
     } else {
       setShowResults(true)
       // Clear progress when quiz is completed
-      localStorage.removeItem(progressKey)
+      if (activeQuizIds) {
+        const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
+        localStorage.removeItem(progressKey)
+      }
     }
   }
 
@@ -172,7 +191,10 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
     setUserAnswers(quizData ? new Array(quizData.questions.length).fill(null) : [])
     
     // Clear saved progress
-    localStorage.removeItem(progressKey)
+    if (activeQuizIds) {
+      const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
+      localStorage.removeItem(progressKey)
+    }
   }
 
   const toggleHint = () => {
@@ -183,6 +205,15 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
     return (
       <div>
         <ErrorScreen error={error} />
+      </div>
+    )
+  }
+
+  // If no activeQuizIds, show error
+  if (!activeQuizIds || activeQuizIds.length === 0) {
+    return (
+      <div>
+        <ErrorScreen error="No quiz selected. Please select a quiz from the list." />
       </div>
     )
   }
