@@ -8,6 +8,7 @@ import { LoadingScreen } from "./LoadingScreen"
 import { ErrorScreen } from "./ErrorScreen"
 import type { QuizData, WeeklyQuizData } from "../../lib/quiz-types"
 import { getRandomQuizIds } from "../../lib/quiz-types"
+import { API_BASE_URL } from "../../lib/config"
 
 interface QuizListProps {
   onSelect?: (quizIds: number[]) => void
@@ -22,7 +23,7 @@ export function QuizList({ onSelect, onBack }: QuizListProps) {
   useEffect(() => {
     const fetchWeeklyQuizzes = async () => {
       try {
-        const response = await fetch('http://localhost:8000/quizzes/weekly?max_weeks=10')
+        const response = await fetch(`${API_BASE_URL}/quizzes/weekly?max_weeks=10`)
         
         if (!response.ok) {
           throw new Error('Failed to fetch weekly quizzes')

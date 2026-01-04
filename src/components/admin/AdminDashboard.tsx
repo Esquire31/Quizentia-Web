@@ -3,6 +3,7 @@ import { Card } from '../ui/base/card';
 import { Button } from '../ui/base/button';
 import { Badge } from '../ui/base/badge';
 import WeeklyQuizManager from './WeeklyQuizManager';
+import { API_BASE_URL } from '../../lib/config';
 
 interface QuizItem {
   id: number;
@@ -38,7 +39,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8000/quizzes/weekly?max_weeks=52', {
+      const response = await fetch(`${API_BASE_URL}/quizzes/weekly?max_weeks=52`, {
         headers: {
           'accept': 'application/json'
         }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card } from '../ui/base/card';
 import { Button } from '../ui/base/button';
 import { Badge } from '../ui/base/badge';
+import { API_BASE_URL } from '../../lib/config';
 import QuestionBasisView from './QuestionBasisView';
 
 interface AdminQuizItem {
@@ -56,7 +57,7 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
         return;
       }
 
-      const response = await fetch(`http://localhost:8000/admin/weeks/${weekId}/quizzes`, {
+      const response = await fetch(`${API_BASE_URL}/admin/weeks/${weekId}/quizzes`, {
         headers: {
           'accept': 'application/json',
           'Authorization': `Bearer ${token}`

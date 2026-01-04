@@ -9,6 +9,7 @@ import { ErrorScreen } from "./ErrorScreen"
 import { QuizProgress } from "./QuizProgress"
 import { QuestionCard } from "./QuestionCard"
 import { ResultsScreen } from "./ResultsScreen"
+import { API_BASE_URL } from "../../lib/config"
 
 interface QuizScreenProps {
   quizIds?: number[]
@@ -101,7 +102,7 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
           return;
         }
 
-        const response = await fetch(`http://localhost:8000/quizzes/get`, {
+        const response = await fetch(`${API_BASE_URL}/quizzes/get`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

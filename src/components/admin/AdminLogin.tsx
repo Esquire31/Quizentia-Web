@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Card } from '../ui/base/card';
 import { Button } from '../ui/base/button';
+import { API_BASE_URL } from '../../lib/config';
 
 interface AdminLoginProps {
   onLogin: (username: string, password: string) => void;
@@ -24,7 +25,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://localhost:8000/admin/login', {
+      const response = await fetch(`${API_BASE_URL}/admin/login`, {
         method: 'POST',
         headers: { 
           'accept': 'application/json',

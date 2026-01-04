@@ -6,6 +6,7 @@ import type { QuizQuestion } from '../../lib/quiz-types';
 import QuestionEditModal from '../ui/modal/QuestionEditModal';
 import DeleteConfirmModal from '../ui/modal/DeleteConfirmModal';
 import DeleteSuccessModal from '../ui/modal/DeleteSuccessModal';
+import { API_BASE_URL } from '../../lib/config';
 
 interface QuestionWithMetadata extends QuizQuestion {
   quiz_id: number;
@@ -63,7 +64,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
       
       if (quizId) {
         // Fetch questions for specific quiz
-        response = await fetch(`http://localhost:8000/admin/quizzes/${quizId}/questions`, {
+        response = await fetch(`${API_BASE_URL}/admin/quizzes/${quizId}/questions`, {
           headers: {
             'accept': 'application/json',
             'Authorization': `Bearer ${token}`
@@ -71,7 +72,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
         });
       } else {
         // Fetch all questions for the week
-        response = await fetch(`http://localhost:8000/admin/weeks/${weekId}/questions`, {
+        response = await fetch(`${API_BASE_URL}/admin/weeks/${weekId}/questions`, {
           headers: {
             'accept': 'application/json',
             'Authorization': `Bearer ${token}`
@@ -121,7 +122,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
 
       const question = questions[questionIndex];
       
-      const response = await fetch(`http://localhost:8000/admin/quizzes/${question.quiz_id}/questions/${questionIndex}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/quizzes/${question.quiz_id}/questions/${questionIndex}`, {
         method: 'DELETE',
         headers: {
           'accept': 'application/json',
@@ -168,7 +169,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
         hint: updatedQuestion.hint || ''
       };
 
-      const response = await fetch(`http://localhost:8000/admin/quizzes/${updatedQuestion.quiz_id}/questions/${questionIndex}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/quizzes/${updatedQuestion.quiz_id}/questions/${questionIndex}`, {
         method: 'PUT',
         headers: {
           'accept': 'application/json',
