@@ -15,7 +15,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Or your preferred version
+          node-version: 18
+          cache: 'npm'
 
       - name: Install Dependencies
         run: npm install
@@ -23,14 +24,14 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      - name: Deploy to Server via SSH
+      - name: Deploy to Server via SCP
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist/*" # If using Vite, it's 'dist'. If using Create-React-App, it's 'build'
-          target: "/var/www/dreamlaw_quiz"
+          target: "/var/www/html/quiz"
           strip_components: 1
 
       - name: Cleanup and Restart Nginx
@@ -40,4 +41,12 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo systemctl restart nginx
+            # 1. Fix ownership so Nginx (www-data) can read the new files
+            sudo chown -R www-data:www-data /var/www/html/quiz
+            
+            # 2. Set directory and file permissions to prevent 403 errors
+            sudo find /var/www/html/quiz -type d -exec chmod 755 {} +
+            sudo find /var/www/html/quiz -type f -exec chmod 644 {} +
+            
+            # 3. Reload Nginx to ensure it picks up any new file changes
+            sudo systemctl reload nginx
