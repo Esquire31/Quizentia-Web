@@ -2,7 +2,7 @@ name: Deploy React Frontend
 
 on:
   push:
-    branches: [ DreamLaw/release ] # Change this to 'master' if your branch is named master
+    branches: [ DreamLaw/release ]
 
 jobs:
   build-and-deploy:
@@ -23,6 +23,7 @@ jobs:
 
       - name: Build Project
         run: |
+          # Inject the production API URL into the build process
           echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env.production
           npm run build
 
@@ -36,17 +37,20 @@ jobs:
           target: "/var/www/html/quiz"
           strip_components: 1
 
-      - name: Cleanup and Restart Nginx
+      - name: Post-Deployment Permissions and Cleanup
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Ensure the directory exists
+            sudo mkdir -p /var/www/html/quiz
+
             # 1. Fix ownership so Nginx (www-data) can read the new files
             sudo chown -R www-data:www-data /var/www/html/quiz
             
-            # 2. Set directory and file permissions to prevent 403 errors
+            # 2. Set permissions (755 for folders, 644 for files) to avoid 403 Forbidden
             sudo find /var/www/html/quiz -type d -exec chmod 755 {} +
             sudo find /var/www/html/quiz -type f -exec chmod 644 {} +
             
