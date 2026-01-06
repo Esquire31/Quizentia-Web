@@ -66,8 +66,8 @@ export function QuizList({ onSelect, onBack }: QuizListProps) {
       // Use existing quiz IDs for consistency
       selectedIds = JSON.parse(storedIds)
     } else {
-      // Get 10 random quiz IDs from the selected week's quiz_ids
-      selectedIds = getRandomQuizIds(weekQuizIds, 10)
+      // Get 12 random quiz IDs from the selected week's quiz_ids
+      selectedIds = getRandomQuizIds(weekQuizIds, 12)
       // Store them for this user
       localStorage.setItem(storageKey, JSON.stringify(selectedIds))
     }
@@ -95,7 +95,7 @@ export function QuizList({ onSelect, onBack }: QuizListProps) {
           <ArrowLeft className="w-6 h-6 text-gray-700" />
         </button>
       )}
-      <div className="max-w-4xl mx-auto px-4 pb-12 space-y-12">
+      <div className="max-w-4xl mx-auto px-4 max-lg:mx-2 pb-12 space-y-12">
         {/* Current Week Quiz */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           <QuizCard 

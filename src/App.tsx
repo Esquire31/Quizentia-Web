@@ -85,7 +85,7 @@ function App() {
           element={<QuizList onSelect={handleQuizSelect} onBack={() => navigate("/")} />}
         />
         <Route path="/quiz" element={<QuizScreen quizIds={selectedQuizIds} onBack={() => navigate("/quizlist")} />} />
-        <Route path="/admin" element={<AdminLogin onLogin={handleAdminLogin} />} />
+        <Route path="/admin" element={<AdminLogin onLogin={handleAdminLogin} onBack={() => navigate("/")} />} />
         <Route path="/admin/dashboard" element={
           isAdminAuthenticated ? (
             <AdminDashboard onLogout={handleAdminLogout} />

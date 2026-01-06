@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Card } from '../ui/base/card';
 import { Button } from '../ui/base/button';
 import { API_BASE_URL } from '../../lib/config';
+import { ArrowLeft } from 'lucide-react';
 
 interface AdminLoginProps {
   onLogin: (username: string, password: string) => void;
+  onBack?: () => void;
 }
 
-export default function AdminLogin({ onLogin }: AdminLoginProps) {
+export default function AdminLogin({ onLogin, onBack }: AdminLoginProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -56,6 +58,15 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
 
   return (
     <div className="min-h-screen flex items-top justify-center bg-gradient-to-br from-red-100 via-orange-100 to-purple-100 p-4">
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="absolute top-4 left-4 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg z-10"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="w-6 h-6 text-gray-700" />
+        </button>
+      )}
       <Card className="h-full w-full max-w-md p-12 bg-white/70 backdrop-blur-xl rounded-2xl border-0 shadow-xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Login</h1>

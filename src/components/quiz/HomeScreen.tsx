@@ -10,6 +10,13 @@ interface HomeScreenProps {
 export function HomeScreen({ onStart }: HomeScreenProps) {
   return (
     <div className="flex flex-col items-center">
+      <button
+        onClick={() => window.location.href = 'https://dreamlaw.in'}
+        className="absolute top-4 left-4 p-2 px-3 text-gray-700 rounded-lg bg-white/80 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg z-10"
+        aria-label="Back to Home"
+      >
+        Back to Home
+      </button>
       <div className="flex flex-1 justify-center px-4 pb-2 pt-24 md:pt-32 lg:pt-40 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

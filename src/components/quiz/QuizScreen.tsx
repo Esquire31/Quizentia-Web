@@ -246,18 +246,20 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
           <ArrowLeft className="w-6 h-6 text-gray-700" />
         </button>
       )}
-      <QuizProgress current={currentQuestion} total={quizData.questions.length} />
-      <QuestionCard
-        question={quizData.questions[currentQuestion]}
-        currentQuestion={currentQuestion}
-        selectedOption={selectedOption}
-        answered={answered}
-        showHint={showHint}
-        onOptionClick={handleOptionClick}
-        onToggleHint={toggleHint}
-        onNext={handleNext}
-        isLastQuestion={currentQuestion === quizData.questions.length - 1}
-      />
+      <div className="max-lg:mx-4">
+        <QuizProgress current={currentQuestion} total={quizData.questions.length} />
+        <QuestionCard
+          question={quizData.questions[currentQuestion]}
+          currentQuestion={currentQuestion}
+          selectedOption={selectedOption}
+          answered={answered}
+          showHint={showHint}
+          onOptionClick={handleOptionClick}
+          onToggleHint={toggleHint}
+          onNext={handleNext}
+          isLastQuestion={currentQuestion === quizData.questions.length - 1}
+        />
+      </div>
     </div>
   )
 }
