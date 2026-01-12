@@ -11,4 +11,15 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    fs: {
+      strict: true
+    },
+    watch: {
+      ignored: ['**/node_modules/**', '**/.git/**', '**/dist/**']
+    }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'firebase/auth', 'firebase/app']
+  }
 })

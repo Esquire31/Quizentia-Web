@@ -8,7 +8,7 @@ import { ErrorScreen } from "./ErrorScreen"
 import { QuizProgress } from "./QuizProgress"
 import { QuestionCard } from "./QuestionCard"
 import { ResultsScreen } from "./ResultsScreen"
-import { API_BASE_URL } from "../../lib/config"
+import { getQuizzes } from "../../lib/api"
 
 interface QuizScreenProps {
   quizIds?: number[]
@@ -100,19 +100,7 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
           return;
         }
 
-        const response = await fetch(`${API_BASE_URL}/quizzes/get`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ quiz_ids: activeQuizIds }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch quiz');
-        }
-
-        const data: QuizData = await response.json();
+        const data = await getQuizzes(activeQuizIds);
 
         // Shuffle options for each question
         data.questions.forEach(question => {

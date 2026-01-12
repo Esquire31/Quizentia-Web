@@ -6,12 +6,17 @@ import { HomeScreen } from "./components/quiz/HomeScreen"
 import { QuizScreen } from "./components/quiz/QuizScreen"
 import { QuizList } from "./components/quiz/QuizListScreen"
 import { Header } from "./components/common/Header"
-import AdminLogin from "./components/admin/AdminLogin"
+import AdminLogin from "./components/auth/AdminLogin"
 import AdminDashboard from "./components/admin/AdminDashboard"
+import Login from "./components/auth/Login"
+import Register from "./components/auth/Register"
+import { ProtectedRoute } from "./components/ProtectedRoute"
+import { useAuth } from "./contexts/AuthContext"
 
 function App() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth()
   const [selectedQuizIds, setSelectedQuizIds] = useState<number[]>([])
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
     // Check if admin token exists in localStorage on initial load
@@ -52,22 +57,29 @@ function App() {
         return {
           title: "",
           showBackToDreamlaw: true,
-          showAdminButton: true,
-          onAdminClick: () => navigate("/admin")
+          showAdminButton: false,
+          showLogout: !!user
+        }
+      case "/login":
+      case "/register":
+        return {
+          title: "",
+          showBackToDreamlaw: true,
+          showAdminButton: false
         }
       case "/quizlist":
         return {
           title: "Choose Your Quiz",
           onBack: () => navigate("/"),
-          showAdminButton: true,
-          onAdminClick: () => navigate("/admin")
+          showAdminButton: false,
+          showLogout: true
         }
       case "/quiz":
         return {
           title: "Weekly Law Quiz",
           onBack: () => navigate("/quizlist"),
-          showAdminButton: true,
-          onAdminClick: () => navigate("/admin")
+          showAdminButton: false,
+          showLogout: true
         }
       case "/admin":
         return {
@@ -85,14 +97,30 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-100 to-purple-100">
-      <Header {...getHeaderProps()} />
+      {!location.pathname.startsWith('/login') && !location.pathname.startsWith('/register') && <Header {...getHeaderProps()} />}
       <Routes>
-        <Route path="/" element={<HomeScreen onStart={() => navigate("/quizlist")} />} />
+        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} />
+        
+        <Route path="/" element={
+          <ProtectedRoute>
+            <HomeScreen onStart={() => navigate("/quizlist")} />
+          </ProtectedRoute>
+        } />
         <Route
           path="/quizlist"
-          element={<QuizList onSelect={handleQuizSelect} />}
+          element={
+            <ProtectedRoute>
+              <QuizList onSelect={handleQuizSelect} />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/quiz" element={<QuizScreen quizIds={selectedQuizIds} />} />
+        <Route path="/quiz" element={
+          <ProtectedRoute>
+            <QuizScreen quizIds={selectedQuizIds} />
+          </ProtectedRoute>
+        } />
+        
         <Route path="/admin" element={<AdminLogin onLogin={handleAdminLogin} />} />
         <Route path="/admin/dashboard" element={
           isAdminAuthenticated ? (
@@ -101,7 +129,7 @@ function App() {
             <Navigate to="/admin" replace />
           )
         } />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
       </Routes>
     </div>
   )
