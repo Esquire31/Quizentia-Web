@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft } from "lucide-react"
 import type { QuizData } from "../../lib/quiz-types"
 import { shuffleArray } from "../../lib/quiz-types"
 import { LoadingScreen } from "./LoadingScreen"
@@ -13,10 +12,9 @@ import { API_BASE_URL } from "../../lib/config"
 
 interface QuizScreenProps {
   quizIds?: number[]
-  onBack?: () => void
 }
 
-export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
+export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
   const [quizData, setQuizData] = useState<QuizData | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -230,23 +228,13 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
   if (showResults) {
     return (
       <div>
-        <ResultsScreen score={score} totalQuestions={quizData.questions.length} onRestart={handleRestart} onBack={onBack} />
+        <ResultsScreen score={score} totalQuestions={quizData.questions.length} onRestart={handleRestart} />
       </div>
     )
   }
 
   return (
-    <div>
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="absolute top-4 left-4 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg z-10"
-          aria-label="Go back"
-        >
-          <ArrowLeft className="w-6 h-6 text-gray-700" />
-        </button>
-      )}
-      <div className="max-lg:mx-4">
+    <div className="max-lg:mx-4">
         <QuizProgress current={currentQuestion} total={quizData.questions.length} />
         <QuestionCard
           question={quizData.questions[currentQuestion]}
@@ -259,7 +247,6 @@ export function QuizScreen({ quizIds, onBack }: QuizScreenProps = {}) {
           onNext={handleNext}
           isLastQuestion={currentQuestion === quizData.questions.length - 1}
         />
-      </div>
     </div>
   )
 }

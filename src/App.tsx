@@ -5,7 +5,7 @@ import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-
 import { HomeScreen } from "./components/quiz/HomeScreen"
 import { QuizScreen } from "./components/quiz/QuizScreen"
 import { QuizList } from "./components/quiz/QuizListScreen"
-import { QuizHeader } from "./components/quiz/QuizHeader"
+import { Header } from "./components/common/Header"
 import AdminLogin from "./components/admin/AdminLogin"
 import AdminDashboard from "./components/admin/AdminDashboard"
 
@@ -46,46 +46,56 @@ function App() {
     navigate("/")
   }
 
-  const getHeaderTitle = () => {
+  const getHeaderProps = () => {
+    const isAdminPath = location.pathname === "/admin" || location.pathname === "/admin/dashboard"
+    
     switch (location.pathname) {
       case "/":
-        return ""
+        return {
+          title: "",
+          showBackToDreamlaw: true,
+          showAdminButton: true,
+          onAdminClick: () => navigate("/admin")
+        }
       case "/quizlist":
-        return "Choose Your Quiz"
+        return {
+          title: "Choose Your Quiz",
+          onBack: () => navigate("/"),
+          showAdminButton: true,
+          onAdminClick: () => navigate("/admin")
+        }
       case "/quiz":
-        return "Weekly Law Quiz"
+        return {
+          title: "Weekly Law Quiz",
+          onBack: () => navigate("/quizlist"),
+          showAdminButton: true,
+          onAdminClick: () => navigate("/admin")
+        }
       case "/admin":
-        return ""
+        return {
+          title: "",
+          onBack: () => navigate("/")
+        }
       case "/admin/dashboard":
-        return ""
+        return {
+          title: ""
+        }
       default:
-        return ""
+        return {}
     }
   }
 
-  const showAdminButton = location.pathname !== "/admin" && location.pathname !== "/admin/dashboard"
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-100 via-orange-100 to-purple-100">
-      {showAdminButton && (
-        <div className="absolute top-4 right-4 z-50">
-          <button
-            onClick={() => navigate("/admin")}
-            className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg transition font-medium"
-          >
-            Admin Login
-          </button>
-        </div>
-      )}
-      <QuizHeader title={getHeaderTitle()} />
+      <Header {...getHeaderProps()} />
       <Routes>
         <Route path="/" element={<HomeScreen onStart={() => navigate("/quizlist")} />} />
         <Route
           path="/quizlist"
-          element={<QuizList onSelect={handleQuizSelect} onBack={() => navigate("/")} />}
+          element={<QuizList onSelect={handleQuizSelect} />}
         />
-        <Route path="/quiz" element={<QuizScreen quizIds={selectedQuizIds} onBack={() => navigate("/quizlist")} />} />
-        <Route path="/admin" element={<AdminLogin onLogin={handleAdminLogin} onBack={() => navigate("/")} />} />
+        <Route path="/quiz" element={<QuizScreen quizIds={selectedQuizIds} />} />
+        <Route path="/admin" element={<AdminLogin onLogin={handleAdminLogin} />} />
         <Route path="/admin/dashboard" element={
           isAdminAuthenticated ? (
             <AdminDashboard onLogout={handleAdminLogout} />

@@ -80,7 +80,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply text-foreground font-sans antialiased;
+    background: linear-gradient(to bottom right, #fee2e2, #fed7aa, #f3e8ff);
+    min-height: 100vh;
+  }
+  html {
+    background: linear-gradient(to bottom right, #fee2e2, #fed7aa, #f3e8ff);
   }
 }
 

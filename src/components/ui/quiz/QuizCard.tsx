@@ -66,7 +66,7 @@ export function QuizCard({ quiz, isCurrent = false, onSelect }: QuizCardProps) {
               </div>
             </div>
 
-            <p className="text-gray-600 font-thin text-lg mb-8">{formatDateRange(quiz.startDate, quiz.endDate)}</p>
+            <p className="text-gray-600 font-light text-lg mb-8">{formatDateRange(quiz.startDate, quiz.endDate)}</p>
 
             <Button
               onClick={handleSelect}
