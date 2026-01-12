@@ -47,8 +47,6 @@ function App() {
   }
 
   const getHeaderProps = () => {
-    const isAdminPath = location.pathname === "/admin" || location.pathname === "/admin/dashboard"
-    
     switch (location.pathname) {
       case "/":
         return {
