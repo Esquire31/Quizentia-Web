@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleA
 import { auth } from '../../lib/firebase';
 import { Card } from '../ui/base/card';
 import { Button } from '../ui/base/button';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -104,6 +104,14 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-100 via-orange-100 to-purple-100 p-4">
+      <button
+        onClick={() => window.location.href = 'https://dreamlaw.in'}
+        className="absolute top-4 left-4 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg"
+        aria-label="Back to Home"
+        title="Back to Home"
+      >
+        <ArrowLeft className="w-6 h-6 text-gray-700" />
+      </button>
       <Card className="w-full max-w-md p-8 bg-white/70 backdrop-blur-xl rounded-2xl border-0 shadow-xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>

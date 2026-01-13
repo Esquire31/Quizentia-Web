@@ -33,28 +33,24 @@ function App() {
         return {
           title: "",
           showBackToDreamlaw: true,
-          showAdminButton: false,
           showLogout: !!user
         }
       case "/login":
       case "/register":
         return {
           title: "",
-          showBackToDreamlaw: true,
-          showAdminButton: false
+          showBackToDreamlaw: true
         }
       case "/quizlist":
         return {
           title: "Choose Your Quiz",
           onBack: () => navigate("/"),
-          showAdminButton: false,
           showLogout: true
         }
       case "/quiz":
         return {
           title: "Weekly Law Quiz",
           onBack: () => navigate("/quizlist"),
-          showAdminButton: false,
           showLogout: true
         }
       case "/admin/dashboard":

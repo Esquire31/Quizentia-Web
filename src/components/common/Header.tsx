@@ -1,5 +1,6 @@
 import { motion } from "framer-motion"
 import { ArrowLeft, LogOut } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
 import logo from "../../assets/logo.png"
 import { useAuth } from "../../contexts/AuthContext"
 import { useNavigate } from "react-router-dom"
@@ -8,21 +9,19 @@ interface HeaderProps {
   title?: string
   onBack?: () => void
   showBackToDreamlaw?: boolean
-  showAdminButton?: boolean
-  onAdminClick?: () => void
   showLogout?: boolean
 }
 
 export function Header({ 
   title, 
   onBack, 
-  showBackToDreamlaw, 
-  showAdminButton, 
-  onAdminClick,
+  showBackToDreamlaw,
   showLogout 
 }: HeaderProps) {
   const { signOut, user } = useAuth()
   const navigate = useNavigate()
+  const [showDropdown, setShowDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const handleLogout = async () => {
     try {
@@ -32,6 +31,37 @@ export function Header({
       console.error('Failed to log out:', error)
     }
   }
+
+  const getInitials = (name: string | null | undefined, email: string | null | undefined) => {
+    if (name) {
+      const parts = name.trim().split(' ')
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      }
+      return parts[0].substring(0, 2).toUpperCase()
+    }
+    if (email) {
+      return email.substring(0, 2).toUpperCase()
+    }
+    return 'U'
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showDropdown])
 
   return (
     <motion.header
@@ -70,30 +100,38 @@ export function Header({
           {title && <p className="text-gray-700 text-base mt-1">{title}</p>}
         </div>
 
-        {/* Right side - Admin button or Logout */}
+        {/* Right side - User profile */}
         <div className="min-w-[120px] flex justify-end items-center gap-2">
-          {user && (
-            <div className="text-sm text-gray-700 font-medium mr-2">
-              {user.displayName || user.email}
-            </div>
-          )}
-          {showAdminButton && onAdminClick && (
-            <button
-              onClick={onAdminClick}
-              className="bg-gray-800 hover:bg-gray-900 text-white cursor-pointer px-4 py-2 rounded-lg shadow-lg transition font-medium text-sm"
-            >
-              Admin Login
-            </button>
-          )}
           {showLogout && user && (
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white cursor-pointer px-4 py-2 rounded-lg shadow-lg transition font-medium text-sm flex items-center gap-2"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center font-semibold text-gray-800 cursor-pointer"
+                title={user.displayName || user.email || 'User'}
+              >
+                {getInitials(user.displayName, user.email)}
+              </button>
+
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-200">
+                    <p className="text-sm font-semibold text-gray-800">
+                      {user.displayName || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {user.email}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-gray-50 transition flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
