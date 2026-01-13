@@ -57,11 +57,6 @@ function App() {
           showAdminButton: false,
           showLogout: true
         }
-      case "/admin":
-        return {
-          title: "",
-          onBack: () => navigate("/")
-        }
       case "/admin/dashboard":
         return {
           title: ""
