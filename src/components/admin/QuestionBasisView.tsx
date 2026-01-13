@@ -7,6 +7,7 @@ import QuestionEditModal from '../ui/modal/QuestionEditModal';
 import DeleteConfirmModal from '../ui/modal/DeleteConfirmModal';
 import DeleteSuccessModal from '../ui/modal/DeleteSuccessModal';
 import { API_BASE_URL } from '../../lib/config';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface QuestionWithMetadata extends QuizQuestion {
   quiz_id: number;
@@ -36,6 +37,7 @@ interface QuestionBasisViewProps {
 }
 
 export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBasisViewProps) {
+  const { idToken } = useAuth();
   const [questions, setQuestions] = useState<QuestionWithMetadata[]>([]);
   const [quizTitle, setQuizTitle] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
@@ -54,8 +56,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
     setError('');
 
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) {
+      if (!idToken) {
         setError('Authentication required. Please login again.');
         return;
       }
@@ -67,7 +68,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
         response = await fetch(`${API_BASE_URL}/admin/quizzes/${quizId}/questions`, {
           headers: {
             'accept': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${idToken}`
           }
         });
       } else {
@@ -75,7 +76,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
         response = await fetch(`${API_BASE_URL}/admin/weeks/${weekId}/questions`, {
           headers: {
             'accept': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${idToken}`
           }
         });
       }
@@ -114,8 +115,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
 
   const handleDeleteQuestion = async (questionIndex: number) => {
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) {
+      if (!idToken) {
         alert('Authentication required. Please login again.');
         return;
       }
@@ -126,7 +126,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
         method: 'DELETE',
         headers: {
           'accept': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${idToken}`
         }
       });
 
@@ -156,8 +156,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
 
   const handleSaveQuestion = async (updatedQuestion: { quiz_id: number; question_index: number; question: string; options: string[]; correct_answer: string; hint?: string; }, questionIndex: number) => {
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) {
+      if (!idToken) {
         alert('Authentication required. Please login again.');
         return;
       }
@@ -174,7 +173,7 @@ export default function QuestionBasisView({ weekId, quizId, onBack }: QuestionBa
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify(requestBody)
       });

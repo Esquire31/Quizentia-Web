@@ -10,6 +10,7 @@ import { auth } from '../lib/firebase';
 interface AuthContextType {
   user: User | null;
   idToken: string | null;
+  isAdmin: boolean;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -17,6 +18,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   idToken: null,
+  isAdmin: false,
   loading: true,
   signOut: async () => {}
 });
@@ -36,17 +38,22 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [idToken, setIdToken] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const token = await user.getIdToken();
+        const tokenResult = await user.getIdTokenResult();
+        
         setUser(user);
         setIdToken(token);
+        setIsAdmin(tokenResult.claims.admin === true);
       } else {
         setUser(null);
         setIdToken(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -54,13 +61,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return unsubscribe;
   }, []);
 
-  // Refresh token every 50 minutes (tokens expire after 60 min)
+  // Refresh token and claims every 50 minutes (tokens expire after 60 min)
   useEffect(() => {
     if (user) {
       const interval = setInterval(async () => {
         try {
           const token = await user.getIdToken(true); // Force refresh
+          const tokenResult = await user.getIdTokenResult(true);
+          
           setIdToken(token);
+          setIsAdmin(tokenResult.claims.admin === true);
         } catch (error) {
           console.error('Error refreshing token:', error);
         }
@@ -83,6 +93,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const value = {
     user,
     idToken,
+    isAdmin,
     loading,
     signOut
   };

@@ -4,6 +4,7 @@ import { Button } from '../ui/base/button';
 import { Badge } from '../ui/base/badge';
 import WeeklyQuizManager from './WeeklyQuizManager';
 import { API_BASE_URL } from '../../lib/config';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface QuizItem {
   id: number;
@@ -25,6 +26,7 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
+  const { signOut, idToken } = useAuth();
   const [weeklyQuizzes, setWeeklyQuizzes] = useState<WeeklyQuiz[]>([]);
   const [selectedWeekId, setSelectedWeekId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,9 +41,16 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setError('');
     
     try {
+      if (!idToken) {
+        setError('Authentication required. Please login again.');
+        setIsLoading(false);
+        return;
+      }
+
       const response = await fetch(`${API_BASE_URL}/quizzes/weekly?max_weeks=52`, {
         headers: {
-          'accept': 'application/json'
+          'accept': 'application/json',
+          'Authorization': `Bearer ${idToken}`
         }
       });
       
@@ -59,11 +68,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminTokenType');
-    localStorage.removeItem('adminTokenExpiry');
-    onLogout();
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      onLogout();
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   if (selectedWeekId) {

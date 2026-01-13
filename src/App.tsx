@@ -6,7 +6,6 @@ import { HomeScreen } from "./components/quiz/HomeScreen"
 import { QuizScreen } from "./components/quiz/QuizScreen"
 import { QuizList } from "./components/quiz/QuizListScreen"
 import { Header } from "./components/common/Header"
-import AdminLogin from "./components/auth/AdminLogin"
 import AdminDashboard from "./components/admin/AdminDashboard"
 import Login from "./components/auth/Login"
 import Register from "./components/auth/Register"
@@ -16,38 +15,15 @@ import { useAuth } from "./contexts/AuthContext"
 function App() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useAuth()
+  const { user, isAdmin } = useAuth()
   const [selectedQuizIds, setSelectedQuizIds] = useState<number[]>([])
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
-    // Check if admin token exists in localStorage on initial load
-    const token = localStorage.getItem('adminToken')
-    const expiry = localStorage.getItem('adminTokenExpiry')
-    
-    if (token && expiry) {
-      const expiryTime = parseInt(expiry, 10)
-      if (Date.now() < expiryTime) {
-        return true
-      }
-      // Token expired, clear it
-      localStorage.removeItem('adminToken')
-      localStorage.removeItem('adminTokenType')
-      localStorage.removeItem('adminTokenExpiry')
-    }
-    return false
-  })
 
   const handleQuizSelect = (quizIds: number[]) => {
     setSelectedQuizIds(quizIds)
     navigate("/quiz")
   }
 
-  const handleAdminLogin = () => {
-    setIsAdminAuthenticated(true)
-    navigate("/admin/dashboard")
-  }
-
   const handleAdminLogout = () => {
-    setIsAdminAuthenticated(false)
     navigate("/")
   }
 
@@ -104,7 +80,7 @@ function App() {
         
         <Route path="/" element={
           <ProtectedRoute>
-            <HomeScreen onStart={() => navigate("/quizlist")} />
+            {isAdmin ? <Navigate to="/admin/dashboard" replace /> : <HomeScreen onStart={() => navigate("/quizlist")} />}
           </ProtectedRoute>
         } />
         <Route
@@ -121,12 +97,11 @@ function App() {
           </ProtectedRoute>
         } />
         
-        <Route path="/admin" element={<AdminLogin onLogin={handleAdminLogin} />} />
         <Route path="/admin/dashboard" element={
-          isAdminAuthenticated ? (
+          isAdmin ? (
             <AdminDashboard onLogout={handleAdminLogout} />
           ) : (
-            <Navigate to="/admin" replace />
+            <Navigate to="/" replace />
           )
         } />
         <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />

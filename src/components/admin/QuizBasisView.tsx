@@ -4,6 +4,7 @@ import { Button } from '../ui/base/button';
 import { Badge } from '../ui/base/badge';
 import { API_BASE_URL } from '../../lib/config';
 import QuestionBasisView from './QuestionBasisView';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface AdminQuizItem {
   id: number;
@@ -26,6 +27,7 @@ interface QuizBasisViewProps {
 }
 
 export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
+  const { idToken } = useAuth();
   const [quizzes, setQuizzes] = useState<AdminQuizItem[]>([]);
   const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,8 +53,7 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
     setError('');
 
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) {
+      if (!idToken) {
         setError('Authentication required. Please login again.');
         return;
       }
@@ -60,7 +61,7 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
       const response = await fetch(`${API_BASE_URL}/admin/weeks/${weekId}/quizzes`, {
         headers: {
           'accept': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${idToken}`
         }
       });
 
@@ -89,8 +90,7 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
     }
 
     try {
-      const token = localStorage.getItem('adminToken');
-      if (!token) {
+      if (!idToken) {
         alert('Authentication required. Please login again.');
         return;
       }
