@@ -84,18 +84,17 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
     }
   };
 
-  const handleDeleteQuiz = async (quizId: number) => {
-    if (!confirm(`Are you sure you want to delete this quiz? This action cannot be undone.`)) {
-      return;
-    }
+  // const handleDeleteQuiz = async (quizId: number) => {
+  //   if (!confirm(`Are you sure you want to delete this quiz? This action cannot be undone.`)) {
+  //     return;
+  //   }
 
-    try {
-      if (!idToken) {
-        alert('Authentication required. Please login again.');
-        return;
-      }
+  //   try {
+  //     if (!idToken) {
+  //       alert('Authentication required. Please login again.');
+  //       return;
+  //     }
 
-      // TODO: API call to delete quiz
       // const response = await fetch(`http://localhost:8000/admin/quizzes/${quizId}`, {
       //   method: 'DELETE',
       //   headers: {
@@ -111,13 +110,13 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
       // }
 
       // Mock deletion for now
-      setQuizzes(quizzes.filter(q => q.id !== quizId));
-      alert('Quiz deleted successfully (API not yet implemented)');
-    } catch (err) {
-      console.error('Error deleting quiz:', err);
-      alert('Failed to delete quiz. Please try again.');
-    }
-  };
+  //     setQuizzes(quizzes.filter(q => q.id !== quizId));
+  //     alert('Quiz deleted successfully (API not yet implemented)');
+  //   } catch (err) {
+  //     console.error('Error deleting quiz:', err);
+  //     alert('Failed to delete quiz. Please try again.');
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -196,15 +195,9 @@ export default function QuizBasisView({ weekId }: QuizBasisViewProps) {
               <div className="flex gap-2 mt-4">
                 <Button
                   onClick={() => setSelectedQuizId(quiz.quiz_definition_id)}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 rounded-lg shadow-lg transition"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 rounded-lg shadow-lg transition"
                 >
                   View/Edit
-                </Button>
-                <Button
-                  onClick={() => handleDeleteQuiz(quiz.id)}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition"
-                >
-                  Delete Quiz
                 </Button>
               </div>
             </Card>
