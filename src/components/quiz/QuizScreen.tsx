@@ -8,13 +8,13 @@ import { ErrorScreen } from "./ErrorScreen"
 import { QuizProgress } from "./QuizProgress"
 import { QuestionCard } from "./QuestionCard"
 import { ResultsScreen } from "./ResultsScreen"
-import { getQuizzes } from "../../lib/api"
+import { fetchWeeklyQuestions } from "../../lib/api"
 
 interface QuizScreenProps {
-  quizIds?: number[]
+  weekId?: string
 }
 
-export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
+export function QuizScreen({ weekId }: QuizScreenProps = {}) {
   const [quizData, setQuizData] = useState<QuizData | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -25,35 +25,31 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
   const [error, setError] = useState<string | null>(null)
   const [userAnswers, setUserAnswers] = useState<(string | null)[]>([])
   
-  // If quizIds not provided, try to load from localStorage
-  const [activeQuizIds, setActiveQuizIds] = useState<number[] | undefined>(() => {
-    // Initialize with quizIds from props or localStorage
-    if (quizIds && quizIds.length > 0) {
-      return quizIds
+  // If weekId not provided, try to load from localStorage
+  const [activeWeekId, setActiveWeekId] = useState<string | undefined>(() => {
+    // Initialize with weekId from props or localStorage
+    if (weekId) {
+      return weekId
     }
-    const lastQuizIds = localStorage.getItem('quizentia-last-quiz-ids')
-    if (lastQuizIds) {
-      const parsed = JSON.parse(lastQuizIds)
-      // Only use it if it's a valid non-empty array
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed
-      }
+    const lastWeekId = localStorage.getItem('quizentia-last-week-id')
+    if (lastWeekId) {
+      return lastWeekId
     }
     return undefined
   })
 
   useEffect(() => {
-    if (quizIds && quizIds.length > 0) {
-      // Store the quiz IDs for future reloads
-      localStorage.setItem('quizentia-last-quiz-ids', JSON.stringify(quizIds))
-      setActiveQuizIds(quizIds)
+    if (weekId) {
+      // Store the week ID for future reloads
+      localStorage.setItem('quizentia-last-week-id', weekId)
+      setActiveWeekId(weekId)
     }
-  }, [quizIds])
+  }, [weekId])
 
   // Save progress whenever state changes
   useEffect(() => {
-    if (quizData && !showResults && activeQuizIds && activeQuizIds.length > 0) {
-      const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
+    if (quizData && !showResults && activeWeekId) {
+      const progressKey = `quizentia-progress-${activeWeekId}`;
       const progress = {
         currentQuestion,
         score,
@@ -63,15 +59,15 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
       }
       localStorage.setItem(progressKey, JSON.stringify(progress))
     }
-  }, [currentQuestion, score, userAnswers, answered, selectedOption, quizData, showResults, activeQuizIds])
+  }, [currentQuestion, score, userAnswers, answered, selectedOption, quizData, showResults, activeWeekId])
 
   useEffect(() => {
-    if (!activeQuizIds || activeQuizIds.length === 0) return
+    if (!activeWeekId) return
 
     const fetchQuiz = async () => {
-      const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
-      const cacheKey = `quizentia-quiz-data-${activeQuizIds.join('-')}`;
-      const cacheExpiryKey = `quizentia-quiz-expiry-${activeQuizIds.join('-')}`;
+      const progressKey = `quizentia-progress-${activeWeekId}`;
+      const cacheKey = `quizentia-quiz-data-${activeWeekId}`;
+      const cacheExpiryKey = `quizentia-quiz-expiry-${activeWeekId}`;
       const cacheDuration = 60 * 60 * 1000;
 
       try {
@@ -100,7 +96,14 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
           return;
         }
 
-        const data = await getQuizzes(activeQuizIds);
+        const response = await fetchWeeklyQuestions(activeWeekId);
+        
+        // Transform response to QuizData format
+        const data: QuizData = {
+          id: response.week_id,
+          title: `Week ${response.week_id}`,
+          questions: response.questions
+        };
 
         // Shuffle options for each question
         data.questions.forEach(question => {
@@ -131,7 +134,7 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
       }
     };
     fetchQuiz();
-  }, [activeQuizIds])
+  }, [activeWeekId])
 
   const handleOptionClick = (option: string) => {
     if (!quizData || answered) return
@@ -161,8 +164,8 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
     } else {
       setShowResults(true)
       // Clear progress when quiz is completed
-      if (activeQuizIds) {
-        const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
+      if (activeWeekId) {
+        const progressKey = `quizentia-progress-${activeWeekId}`;
         localStorage.removeItem(progressKey)
       }
     }
@@ -178,8 +181,8 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
     setUserAnswers(quizData ? new Array(quizData.questions.length).fill(null) : [])
     
     // Clear saved progress
-    if (activeQuizIds) {
-      const progressKey = `quizentia-progress-${activeQuizIds.join('-')}`;
+    if (activeWeekId) {
+      const progressKey = `quizentia-progress-${activeWeekId}`;
       localStorage.removeItem(progressKey)
     }
   }
@@ -196,8 +199,8 @@ export function QuizScreen({ quizIds }: QuizScreenProps = {}) {
     )
   }
 
-  // If no activeQuizIds, show error
-  if (!activeQuizIds || activeQuizIds.length === 0) {
+  // If no activeWeekId, show error
+  if (!activeWeekId) {
     return (
       <div>
         <ErrorScreen error="No quiz selected. Please select a quiz from the list." />

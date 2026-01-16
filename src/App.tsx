@@ -16,10 +16,10 @@ function App() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, isAdmin } = useAuth()
-  const [selectedQuizIds, setSelectedQuizIds] = useState<number[]>([])
+  const [selectedWeekId, setSelectedWeekId] = useState<string | undefined>()
 
-  const handleQuizSelect = (quizIds: number[]) => {
-    setSelectedQuizIds(quizIds)
+  const handleQuizSelect = (weekId: string) => {
+    setSelectedWeekId(weekId)
     navigate("/quiz")
   }
 
@@ -84,7 +84,7 @@ function App() {
         />
         <Route path="/quiz" element={
           <ProtectedRoute>
-            <QuizScreen quizIds={selectedQuizIds} />
+            <QuizScreen weekId={selectedWeekId} />
           </ProtectedRoute>
         } />
         

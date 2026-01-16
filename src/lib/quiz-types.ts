@@ -5,6 +5,18 @@ export interface QuizQuestion {
   hint?: string;
 }
 
+export interface QuizQuestionWithMetadata extends QuizQuestion {
+  quiz_id: number;
+  quiz_title: string;
+  quiz_url: string;
+}
+
+export interface WeeklyQuestionsResponse {
+  week_id: string;
+  total_questions: number;
+  questions: QuizQuestionWithMetadata[];
+}
+
 export interface QuizData {
   id?: string;
   title: string;
@@ -28,6 +40,7 @@ export interface WeeklyQuizItem {
 }
 
 export interface WeeklyQuizData {
+  week_id: string;
   week_label: string;
   quiz_ids: number[];
   quizzes: WeeklyQuizItem[];

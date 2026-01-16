@@ -6,11 +6,10 @@ import { QuizCard } from "../ui/quiz/QuizCard"
 import { LoadingScreen } from "./LoadingScreen"
 import { ErrorScreen } from "./ErrorScreen"
 import type { QuizData, WeeklyQuizData } from "../../lib/quiz-types"
-import { getRandomQuizIds } from "../../lib/quiz-types"
 import { fetchWeeklyQuizzes } from "../../lib/api"
 
 interface QuizListProps {
-  onSelect?: (quizIds: number[]) => void
+  onSelect?: (weekId: string) => void
 }
 
 export function QuizList({ onSelect }: QuizListProps) {
@@ -48,23 +47,8 @@ export function QuizList({ onSelect }: QuizListProps) {
   const currentWeek = weeklyData[0]
   const previousWeeks = weeklyData.slice(1)
 
-  const handleQuizSelect = (weekLabel: string, weekQuizIds: number[]) => {
-    // Check if we already have stored quiz IDs for this week
-    const storageKey = `quizentia-week-${weekLabel}`
-    const storedIds = localStorage.getItem(storageKey)
-    
-    let selectedIds: number[]
-    if (storedIds) {
-      // Use existing quiz IDs for consistency
-      selectedIds = JSON.parse(storedIds)
-    } else {
-      // Get 12 random quiz IDs from the selected week's quiz_ids
-      selectedIds = getRandomQuizIds(weekQuizIds, 12)
-      // Store them for this user
-      localStorage.setItem(storageKey, JSON.stringify(selectedIds))
-    }
-    
-    onSelect?.(selectedIds)
+  const handleQuizSelect = (weekId: string) => {
+    onSelect?.(weekId)
   }
 
   // Convert week to QuizData for display
@@ -83,7 +67,7 @@ export function QuizList({ onSelect }: QuizListProps) {
           <QuizCard 
             quiz={createWeekQuizData(currentWeek)} 
             isCurrent={true} 
-            onSelect={() => handleQuizSelect(currentWeek.week_label, currentWeek.quiz_ids)} 
+            onSelect={() => handleQuizSelect(currentWeek.week_id)} 
           />
         </motion.div>
 
@@ -101,7 +85,7 @@ export function QuizList({ onSelect }: QuizListProps) {
                 >
                   <QuizCard 
                     quiz={createWeekQuizData(week)} 
-                    onSelect={() => handleQuizSelect(week.week_label, week.quiz_ids)} 
+                    onSelect={() => handleQuizSelect(week.week_id)} 
                   />
                 </motion.div>
               ))}

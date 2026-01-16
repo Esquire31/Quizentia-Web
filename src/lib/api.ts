@@ -1,6 +1,6 @@
 import { auth } from './firebase';
 import { API_BASE_URL } from './config';
-import type { WeeklyQuizData, QuizData } from './quiz-types';
+import type { WeeklyQuizData, QuizData, WeeklyQuestionsResponse } from './quiz-types';
 
 /**
  * Get authentication headers with Firebase ID token
@@ -33,6 +33,24 @@ export async function fetchWeeklyQuizzes(maxWeeks: number = 10): Promise<WeeklyQ
   
   if (!response.ok) {
     throw new Error(`Failed to fetch weekly quizzes: ${response.status}`);
+  }
+  
+  return response.json();
+}
+
+/**
+ * Fetch all questions for a specific week
+ * @param weekId - Week ID (e.g., "260101")
+ * @returns Weekly questions response with all 100 questions
+ */
+export async function fetchWeeklyQuestions(weekId: string): Promise<WeeklyQuestionsResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/quizzes/weekly/${weekId}/questions`, {
+    headers
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch weekly questions: ${response.status}`);
   }
   
   return response.json();
