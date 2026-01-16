@@ -63,7 +63,7 @@ export default function QuizRulesModal({ isOpen, onAccept }: QuizRulesModalProps
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">Progress Saved</h3>
-              <p>Your progress is automatically saved. You can close and resume the quiz anytime.</p>
+              <p>Your progress is automatically saved for 1 hour. You can close and resume the quiz anytime within this period.</p>
             </div>
           </div>
 
