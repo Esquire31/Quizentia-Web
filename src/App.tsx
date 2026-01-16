@@ -5,6 +5,7 @@ import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-
 import { HomeScreen } from "./components/quiz/HomeScreen"
 import { QuizScreen } from "./components/quiz/QuizScreen"
 import { QuizList } from "./components/quiz/QuizListScreen"
+import { PreviousResultsScreen } from "./components/quiz/PreviousResultsScreen"
 import { Header } from "./components/common/Header"
 import AdminDashboard from "./components/admin/AdminDashboard"
 import Login from "./components/auth/Login"
@@ -21,6 +22,11 @@ function App() {
   const handleQuizSelect = (weekId: string) => {
     setSelectedWeekId(weekId)
     navigate("/quiz")
+  }
+
+  const handleViewResults = (weekId: string) => {
+    setSelectedWeekId(weekId)
+    navigate("/results")
   }
 
   const handleAdminLogout = () => {
@@ -53,6 +59,12 @@ function App() {
           onBack: () => navigate("/quizlist"),
           showLogout: true
         }
+      case "/results":
+        return {
+          title: "Previous Results",
+          onBack: () => navigate("/quizlist"),
+          showLogout: true
+        }
       case "/admin/dashboard":
         return {
           title: ""
@@ -78,13 +90,25 @@ function App() {
           path="/quizlist"
           element={
             <ProtectedRoute>
-              <QuizList onSelect={handleQuizSelect} />
+              <QuizList onSelect={handleQuizSelect} onViewResults={handleViewResults} />
             </ProtectedRoute>
           }
         />
         <Route path="/quiz" element={
           <ProtectedRoute>
             <QuizScreen weekId={selectedWeekId} />
+          </ProtectedRoute>
+        } />
+        <Route path="/results" element={
+          <ProtectedRoute>
+            {selectedWeekId ? (
+              <PreviousResultsScreen 
+                weekId={selectedWeekId} 
+                onBack={() => navigate("/quizlist")} 
+              />
+            ) : (
+              <Navigate to="/quizlist" replace />
+            )}
           </ProtectedRoute>
         } />
         

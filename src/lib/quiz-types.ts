@@ -46,6 +46,54 @@ export interface WeeklyQuizData {
   quizzes: WeeklyQuizItem[];
 }
 
+export interface QuizAnswerSubmission {
+  quiz_id: number;
+  question_index: number;
+  selected_answer: string;
+}
+
+export interface QuizResultSubmission {
+  week_id: string;
+  answers: QuizAnswerSubmission[];
+}
+
+export interface QuizResultResponse {
+  id: number;
+  user_id: string;
+  week_id: string;
+  score: number;
+  total_questions: number;
+  percentage: number;
+  attempt_number: number;
+  is_best: boolean;
+  is_new_best: boolean;
+  completed_at: string;
+}
+
+export interface WeekResultAnswer {
+  quiz_id: number;
+  question_index: number;
+  selected_answer: string;
+  is_correct: boolean;
+}
+
+export interface WeekResultsAttempt {
+  id: number;
+  attempt_number: number;
+  score: number;
+  total_questions: number;
+  percentage: number;
+  is_best: boolean;
+  completed_at: string;
+  answers: WeekResultAnswer[];
+}
+
+export interface WeekResultsResponse {
+  week_id: string;
+  total_attempts: number;
+  attempts: WeekResultsAttempt[];
+}
+
 export function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {

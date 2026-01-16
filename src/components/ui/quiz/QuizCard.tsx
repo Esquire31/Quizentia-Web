@@ -4,16 +4,17 @@ import { motion } from "framer-motion"
 import { Card } from "../base/card"
 import { Badge } from "../base/badge"
 import { Button } from "../base/button"
-import { ArrowRight, Flame } from "lucide-react"
+import { ArrowRight, Flame, History } from "lucide-react"
 import type { QuizData } from "../../../lib/quiz-types"
 
 interface QuizCardProps {
   quiz: QuizData
   isCurrent?: boolean
   onSelect?: (quizId?: string) => void
+  onViewResults?: (quizId?: string) => void
 }
 
-export function QuizCard({ quiz, isCurrent = false, onSelect }: QuizCardProps) {
+export function QuizCard({ quiz, isCurrent = false, onSelect, onViewResults }: QuizCardProps) {
   const formatDateRange = (start?: string, end?: string) => {
     if (!start || !end) return "This Week"
 
@@ -32,6 +33,10 @@ export function QuizCard({ quiz, isCurrent = false, onSelect }: QuizCardProps) {
 
   const handleSelect = () => {
     onSelect?.(quiz.id)
+  }
+
+  const handleViewResults = () => {
+    onViewResults?.(quiz.id)
   }
 
   if (isCurrent) {
@@ -68,13 +73,22 @@ export function QuizCard({ quiz, isCurrent = false, onSelect }: QuizCardProps) {
 
             <p className="text-gray-600 font-light text-lg mb-8">{formatDateRange(quiz.startDate, quiz.endDate)}</p>
 
-            <Button
-              onClick={handleSelect}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-light flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
-            >
-              Attempt Quiz
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                onClick={handleSelect}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-light flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all"
+              >
+                Attempt Quiz
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+              <Button
+                onClick={handleViewResults}
+                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 px-8 py-4 rounded-xl font-light flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+              >
+                <History className="w-5 h-5" />
+                View Results
+              </Button>
+            </div>
           </Card>
         </div>
       </motion.div>
@@ -88,14 +102,31 @@ export function QuizCard({ quiz, isCurrent = false, onSelect }: QuizCardProps) {
       transition={{ duration: 0.4 }}
       whileHover={{ scale: 1.02 }}
     >
-      <button type="button" onClick={handleSelect} className="w-full text-left">
-        <Card className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border-0 cursor-pointer hover:shadow-lg transition-all">
+      <Card className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border-0 hover:shadow-lg transition-all">
+        <div className="mb-4">
           <h3 className="text-lg md:text-xl font-normal text-gray-900 mb-2">
             {quiz.title || `${formatDateRange(quiz.startDate, quiz.endDate)} Quiz`}
           </h3>
           <p className="text-gray-600 text-sm">{formatDateRange(quiz.startDate, quiz.endDate)}</p>
-        </Card>
-      </button>
+        </div>
+        
+        <div className="flex gap-3">
+          <Button
+            onClick={handleSelect}
+            className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg font-light text-sm flex items-center justify-center gap-2 transition-all"
+          >
+            Attempt Quiz
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={handleViewResults}
+            className="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-light text-sm flex items-center justify-center gap-2 transition-all"
+          >
+            <History className="w-4 h-4" />
+            View Results
+          </Button>
+        </div>
+      </Card>
     </motion.div>
   )
 }

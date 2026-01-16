@@ -1,6 +1,6 @@
 import { auth } from './firebase';
 import { API_BASE_URL } from './config';
-import type { WeeklyQuizData, QuizData, WeeklyQuestionsResponse } from './quiz-types';
+import type { WeeklyQuizData, QuizData, WeeklyQuestionsResponse, QuizResultSubmission, QuizResultResponse, WeekResultsResponse } from './quiz-types';
 
 /**
  * Get authentication headers with Firebase ID token
@@ -56,6 +56,41 @@ export async function fetchWeeklyQuestions(weekId: string): Promise<WeeklyQuesti
   return response.json();
 }
 
+/**
+ * Submit quiz results
+ * @param submission - Quiz result submission with week_id and answers
+ * @returns Quiz result response with score and attempt info
+ */
+export async function submitQuizResults(submission: QuizResultSubmission): Promise<QuizResultResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/quizzes/results`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(submission)
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to submit quiz results: ${response.status}`);
+  }
+  
+  return response.json();
+}
+export async function fetchWeekResults(weekId: string): Promise<WeekResultsResponse> {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/users/results/week/${weekId}`, {
+    method: 'GET',
+    headers,
+  });
+  
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('No results found for this week');
+    }
+    throw new Error(`Failed to fetch week results: ${response.status}`);
+  }
+  
+  return response.json();
+}
 /**
  * Get specific quizzes by their IDs and merge them into a single quiz
  * @param quizIds - Array of quiz IDs to fetch
