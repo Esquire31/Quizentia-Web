@@ -11,10 +11,9 @@ import type { WeekResultsResponse, WeekResultsAttempt } from "../../lib/quiz-typ
 
 interface PreviousResultsScreenProps {
   weekId: string
-  onBack: () => void
 }
 
-export function PreviousResultsScreen({ weekId, onBack }: PreviousResultsScreenProps) {
+export function PreviousResultsScreen({ weekId }: PreviousResultsScreenProps) {
   const [results, setResults] = useState<WeekResultsResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

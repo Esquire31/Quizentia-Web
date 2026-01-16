@@ -103,8 +103,7 @@ function App() {
           <ProtectedRoute>
             {selectedWeekId ? (
               <PreviousResultsScreen 
-                weekId={selectedWeekId} 
-                onBack={() => navigate("/quizlist")} 
+                weekId={selectedWeekId}
               />
             ) : (
               <Navigate to="/quizlist" replace />
