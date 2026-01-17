@@ -3,6 +3,7 @@ import { Button } from "../ui/base/button"
 import { Card } from "../ui/base/card"
 import { Sparkles, ArrowLeft, TrendingUp } from "lucide-react"
 import type { QuizResultResponse } from "../../lib/quiz-types"
+import Footer from "../common/Footer"
 
 interface ResultsScreenProps {
   score: number
@@ -116,6 +117,7 @@ export function ResultsScreen({ score, totalQuestions, onRestart, onBack, quizRe
           </Card>
         </motion.div>
       </div>
+      <Footer onTakeAnotherQuiz={onRestart} />
     </>
   )
 }

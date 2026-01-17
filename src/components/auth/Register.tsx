@@ -5,6 +5,7 @@ import { auth } from '../../lib/firebase';
 import { Card } from '../ui/base/card';
 import { Button } from '../ui/base/button';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import Footer from '../common/Footer';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -103,7 +104,8 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-100 via-orange-100 to-purple-100 p-4">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-red-100 via-orange-100 to-purple-100">
+      <div className="flex-grow flex items-center justify-center p-4">
       <button
         onClick={() => window.location.href = 'https://dreamlaw.in'}
         className="absolute top-4 left-4 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all shadow-md hover:shadow-lg"
@@ -251,6 +253,8 @@ export default function Register() {
           </div>
         </form>
       </Card>
+      </div>
+      <Footer />
     </div>
   );
 }

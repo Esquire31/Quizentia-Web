@@ -7,6 +7,7 @@ import { LoadingScreen } from "./LoadingScreen"
 import { ErrorScreen } from "./ErrorScreen"
 import type { QuizData, WeeklyQuizData } from "../../lib/quiz-types"
 import { fetchWeeklyQuizzes } from "../../lib/api"
+import Footer from "../common/Footer"
 
 interface QuizListProps {
   onSelect?: (weekId: string) => void
@@ -66,6 +67,7 @@ export function QuizList({ onSelect, onViewResults }: QuizListProps) {
   }
 
   return (
+    <>
     <div className="max-w-4xl mx-auto px-4 max-lg:mx-2 mt-6 pb-12 space-y-12">
         {/* Current Week Quiz */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -100,5 +102,7 @@ export function QuizList({ onSelect, onViewResults }: QuizListProps) {
           </motion.div>
         )}
     </div>
+    <Footer />
+    </>
   )
 }

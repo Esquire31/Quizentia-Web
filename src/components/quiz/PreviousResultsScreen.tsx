@@ -8,6 +8,7 @@ import { fetchWeekResults } from "../../lib/api"
 import { LoadingScreen } from "./LoadingScreen"
 import { ErrorScreen } from "./ErrorScreen"
 import type { WeekResultsResponse, WeekResultsAttempt } from "../../lib/quiz-types"
+import Footer from "../common/Footer"
 
 interface PreviousResultsScreenProps {
   weekId: string
@@ -214,6 +215,7 @@ export function PreviousResultsScreen({ weekId }: PreviousResultsScreenProps) {
           </motion.div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

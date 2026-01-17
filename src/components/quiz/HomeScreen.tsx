@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Button } from "../ui/base/button"
+import Footer from "../common/Footer"
 
 interface HomeScreenProps {
   onStart: () => void
@@ -49,6 +50,7 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
           </motion.div>
         </motion.div>
       </div>
+      <Footer />
     </div>
   )
 }
