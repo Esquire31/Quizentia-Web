@@ -29,10 +29,10 @@ const Footer: React.FC<FooterProps> = ({ onTakeAnotherQuiz }) => {
           <div className="flex flex-col flex-1 mb-4">
             <div className="flex items-center justify-center gap-2">
               <span className="material-symbols-outlined text-[#896b5d] dark:text-primary/80 text-sm">
-                favorite
+                memory
               </span>
               <h4 className="text-[#896b5d] dark:text-primary/80 text-xs font-bold uppercase leading-normal tracking-[0.2em]">
-                Made with love by Realaza
+                Powered by AI & Developed by Realaza Developers
               </h4>
             </div>
           </div>
