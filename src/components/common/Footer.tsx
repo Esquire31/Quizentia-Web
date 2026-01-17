@@ -26,13 +26,13 @@ const Footer: React.FC<FooterProps> = ({ onTakeAnotherQuiz }) => {
       <footer className="bg-[#FFE2D3] dark:bg-[#19222a] pt-2 pb-16 px-6 -mt-1">
         <div className="max-w-[960px] mx-auto flex flex-col items-center">
           {/* Section Header (Made with love) */}
-          <div className="flex flex-col flex-1 mb-4">
-            <div className="flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined text-[#896b5d] dark:text-primary/80 text-sm">
+          <div className="flex flex-col flex-1 mb-4 w-full">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-center px-1 sm:px-2">
+              <span className="material-symbols-outlined text-[#896b5d] dark:text-primary/80 text-sm md:text-base flex-shrink-0">
                 memory
               </span>
-              <h4 className="text-[#896b5d] dark:text-primary/80 text-xs font-bold uppercase leading-normal tracking-[0.2em]">
-                Powered by AI & Developed by Realaza Developers
+              <h4 className="text-[#896b5d] dark:text-primary/80 text-sm md:text-base font-bold uppercase leading-normal tracking-tight md:tracking-[0.2em]">
+                Powered by AI & Developed by Realaza
               </h4>
             </div>
           </div>
