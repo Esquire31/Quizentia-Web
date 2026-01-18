@@ -104,7 +104,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-red-100 via-orange-100 to-purple-100">
+    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-red-100 via-orange-100 to-purple-100">
       <div className="flex-grow flex items-center justify-center p-4">
       <button
         onClick={() => window.location.href = 'https://dreamlaw.in'}

@@ -1,5 +1,4 @@
 import { motion } from "framer-motion"
-import Footer from "../common/Footer"
 
 export function LoadingScreen() {
   return (
@@ -10,7 +9,6 @@ export function LoadingScreen() {
           <p className="text-gray-700 text-lg font-medium">Loading the content for you...</p>
         </motion.div>
       </div>
-      <Footer />
     </div>
   )
 }

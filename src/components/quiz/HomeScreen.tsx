@@ -10,8 +10,8 @@ interface HomeScreenProps {
 
 export function HomeScreen({ onStart }: HomeScreenProps) {
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex flex-1 justify-center px-4 pb-2 pt-24 md:pt-32 lg:pt-40 w-full">
+    <div className="min-h-screen flex flex-col justify-between">
+      <div className="flex flex-1 justify-center items-center px-4 pb-2 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
